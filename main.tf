@@ -23,10 +23,6 @@ resource "aws_instance" "my_ec2" {
 
               systemctl start docker
               systemctl enable docker
-
-              docker pull vamsi/myimage:v1
-
-              docker run -d -p 80:5000 --name mycontainer vamsi/myimage:v1
               EOF
 
   tags = {
