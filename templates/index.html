@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>Students</title></head>
+<body>
+<h2>All Students</h2>
+
+<a href="/add">Add Student</a> |
+<a href="/search">Search</a>
+
+<ul>
+{% for s in students %}
+  <li>
+    {{ s.name }} - Avg: {{ "%.2f"|format(s.average) }}
+    <a href="/delete/{{ s.name }}">Delete</a>
+  </li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
