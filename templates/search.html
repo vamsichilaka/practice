@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Search Student</h2>
+
+<form method="post">
+  Name: <input name="name">
+  <button type="submit">Search</button>
+</form>
+
+{% if result %}
+  <p>{{ result.name }} - Avg: {{ result.average }}</p>
+{% elif result is not none %}
+  <p>Student not found</p>
+{% endif %}
+
+</body>
+</html>
