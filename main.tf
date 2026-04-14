@@ -5,29 +5,31 @@ terraform {
       version = "~> 5.0"
     }
   }
-
-  backend "s3" {
-    bucket         = "vamsi-teeraform.state"
-    key            = "dev/terraform.tfstate"
-    region         = "ap-south-1"
-    dynamodb_table = "terraform-lock"
-  }
 }
+
 provider "aws" {
-  region = "ap-south-1"
+  region = "ap-south-1"   # change if needed
 }
-resource "aws_s3_bucket" "my_bucket" {
-  bucket = "${var.project}${var.env}1248"
+
+resource "aws_instance" "my_ec2" {
+  ami           = "ami-0f58b397bc5c1f2e8"
+  instance_type = "t2.micro"
+
+  user_data = <<-EOF
+              #!/bin/bash
+
+              yum update -y
+              yum install -y docker
+
+              systemctl start docker
+              systemctl enable docker
+
+              docker pull vamsi/myimage:v1
+
+              docker run -d -p 80:5000 --name mycontainer vamsi/myimage:v1
+              EOF
 
   tags = {
-    Name        = "${var.project}"
-    Environment = var.env
+    Name = "MyDockerInstance"
   }
-}
-resource "aws_instance" "example" {
-  ami           = "ami-0f58b397bc5c1f2e8"
-  instance_type = var.instancetype
-  tags = {
-    name = "${var.env}app"
-   }
 }
