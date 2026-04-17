@@ -12,26 +12,43 @@ provider "aws" {
 }
 
 resource "aws_instance" "my_ec2" {
-  ami           = "ami-0f58b397bc5c1f2e8"
+  ami           = "ami-0e670eb768a5fc3d4" # Amazon Linux 2
   instance_type = "t2.micro"
 
   user_data = <<-EOF
-              #!/bin/bash
-              apt update -y
-              apt install -y docker.io git
+#!/bin/bash
 
-              systemctl start docker
-              systemctl enable docker
+# update system
+yum update -y
 
-              cd /home/ubuntu
-              git clone https://github.com/suysuyua/practice.git
+# install docker & git
+yum install -y docker git
 
-              cd practice
-              docker build -t studentimage .
-              docker run -d -p 5000:5000 --name mystudent studentimage
-              EOF
+# start docker
+systemctl start docker
+systemctl enable docker
+
+# allow ec2-user to use docker
+usermod -aG docker ec2-user
+
+# go to ec2-user home
+cd /home/ec2-user
+
+# clone your repo
+git clone -b Dev https://github.com/vamsichilaka/practice.git
+
+# go inside repo
+cd practice
+
+# build docker image
+docker build -t studentapp:v1 .
+
+# run container
+docker run -d -p 8081:5000 --name studentdetails studentapp:v1
+
+EOF
 
   tags = {
-    Name = "MyDockerInstance"
+    Name = "myec2"
   }
 }
